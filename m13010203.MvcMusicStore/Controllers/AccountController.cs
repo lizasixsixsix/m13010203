@@ -1,16 +1,19 @@
-﻿using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
+﻿using m13010203.Common;
+using m13010203.MvcMusicStore.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
-using m13010203.MvcMusicStore.Models;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
 
 namespace m13010203.MvcMusicStore.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
+        private static readonly ILogger Logger = DependencyResolver.Current.GetService<ILogger>();
+
         public enum ManageMessageId
         {
             ChangePasswordSuccess,
@@ -54,6 +57,8 @@ namespace m13010203.MvcMusicStore.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            AccountController.Logger?.LogDebug("Login");
+
             ViewBag.ReturnUrl = returnUrl;
 
             return View();
@@ -96,6 +101,8 @@ namespace m13010203.MvcMusicStore.Controllers
         {
             if (ModelState.IsValid)
             {
+                AccountController.Logger?.LogDebug("Registration");
+
                 var user = new ApplicationUser { UserName = model.UserName };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
